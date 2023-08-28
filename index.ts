@@ -15,7 +15,7 @@ app.use('/vendor', VendorRoute)
 
 console.log("ENV!:", process.env.MONGO_DB_URI)
 
-mongoose.connect(process.env.MONGO_DB_URI as any)
+mongoose.connect(process.env.MONGO_DB_URI || '')
     .then(result => {
         console.log('DB Connected')})
     .catch(err => console.log('error: '+err))
