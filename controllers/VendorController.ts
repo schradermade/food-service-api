@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express'
 import { VendorLoginInputs } from '../dto';
-import { validatePassword, vendorExists } from '../utility';
+import { generateSignature, validatePassword, vendorExists } from '../utility';
 
 export const VendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = <VendorLoginInputs>req.body;
@@ -11,11 +11,28 @@ export const VendorLogin = async (req: Request, res: Response, next: NextFunctio
         return res.json({"message": "This vendor does not exist."})
     }
 
-    const validation = await validatePassword(password, existingVendor.password, existingVendor.salt)
-
-    if (validation) {
-        return res.json(existingVendor)
+    const passwordValid = await validatePassword(password, existingVendor.password, existingVendor.salt)
+    if (passwordValid) {
+        const signature = generateSignature({
+            _id: existingVendor.id,
+            email: existingVendor.email,
+            foodTypes: existingVendor.foodType,
+            name: existingVendor.name
+        })
+        return res.json(signature)
     } else {
         return res.json({"message": "Password is not valid!"})
     }
+}
+
+export const GetVendorProfile = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+export const UpdateVendorProfile = async (req: Request, res: Response, next: NextFunction) => {
+    
+}
+
+export const UpdateVendorService = async (req: Request, res: Response, next: NextFunction) => {
+    
 }
