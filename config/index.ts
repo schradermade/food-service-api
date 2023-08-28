@@ -1,0 +1,1 @@
+export const MONGO_URI = 'mongodb+srv://nathanschrader:jdwjNcoSefe5bk3P@cluster0.rpyhict.mongodb.net/'
