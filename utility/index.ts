@@ -1,2 +1,2 @@
-export * from './PasswordUtility'
-export * from './helperFunctions'
+export * from './PasswordUtility';
+export * from './helperFunctions';

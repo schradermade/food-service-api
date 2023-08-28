@@ -1,58 +1,77 @@
-import {Request, Response, NextFunction} from 'express'
-import {CreateVendorInput} from '../dto'
+import { Request, Response, NextFunction } from 'express';
+import { CreateVendorInput } from '../dto';
 import { Vendor } from '../models';
 import { generatePassword, generateSalt, vendorExists } from '../utility';
 
+export const CreateVendor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const {
+    name,
+    address,
+    pincode,
+    foodType,
+    email,
+    password,
+    ownerName,
+    phone,
+  } = <CreateVendorInput>req.body;
 
+  const existingVendor = await vendorExists(undefined, email);
 
-export const CreateVendor = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, address, pincode, foodType, email, password, ownerName, phone} = <CreateVendorInput>req.body;
+  if (existingVendor !== null) {
+    return res.json({ message: 'A vendor with that email already exists.' });
+  }
 
-    const existingVendor = await vendorExists(undefined, email)
+  // generate salt
+  const salt = await generateSalt();
+  // encrypt the password using the salt
+  const userPassword = await generatePassword(password, salt);
 
-    if (existingVendor !== null) {
-        return res.json({"message": "A vendor with that email already exists."})
-    }
+  const createdVendor = await Vendor.create({
+    name: name,
+    address: address,
+    pincode: pincode,
+    foodType: foodType,
+    email: email,
+    salt: salt,
+    password: userPassword,
+    ownerName: ownerName,
+    phone: phone,
+    rating: 0,
+    serviceAvailable: false,
+    coverImages: [],
+  });
+  return res.json(createdVendor);
+};
 
-    // generate salt
-    const salt = await generateSalt()
-    // encrypt the password using the salt
-    const userPassword = await generatePassword(password, salt);
+export const GetVendors = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const vendors = await Vendor.find();
 
-    const createdVendor = await Vendor.create({
-        name: name,
-        address: address,
-        pincode: pincode,
-        foodType: foodType,
-        email: email,
-        salt: salt,
-        password: userPassword,
-        ownerName: ownerName,
-        phone: phone,
-        rating: 0,
-        serviceAvailable: false,
-        coverImages: [],
-    })
-    return res.json(createdVendor)
-}
+  if (vendors !== null) {
+    return res.json(vendors);
+  }
 
-export const GetVendors = async (req: Request, res: Response, next: NextFunction) => {
-    const vendors = await Vendor.find()
+  return res.json({ message: 'No vendors data available' });
+};
 
-    if(vendors !== null) {
-        return res.json(vendors)
-    }
+export const GetVendorById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const vendorId = req.params.id;
 
-    return res.json({"message": "No vendors data available"})
-}
+  const vendor = await vendorExists(vendorId);
+  if (vendor === null) {
+    return res.json({ message: `Vendor id ${vendorId} not found` });
+  }
 
-export const GetVendorById = async (req: Request, res: Response, next: NextFunction) => {
-    const vendorId = req.params.id;
-
-    const vendor = await vendorExists(vendorId)
-    if (vendor === null) {
-        return res.json({"message": `Vendor id ${vendorId} not found`});
-    }
-
-    return res.json(vendor)
-}
+  return res.json(vendor);
+};
