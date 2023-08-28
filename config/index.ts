@@ -1,1 +1,5 @@
-export const MONGO_URI = 'mongodb+srv://nathanschrader:jdwjNcoSefe5bk3P@cluster0.rpyhict.mongodb.net/'
+require('dotenv').config()
+
+
+export const MONGO_URI = process.env.MONGO_DB_URI
+
