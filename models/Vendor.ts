@@ -28,7 +28,7 @@ const VendorSchema = new Schema({
     salt: {type: String, required: true},
     serviceAvailable: {type: Boolean},
     coverImages: {type: [String]},
-    rating: {type: [String]},
+    rating: {type: Number},
     // foods: [{
     //     type: mongoose.SchemaTypes.ObjectId,
     //     ref: 'food'
