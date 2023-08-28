@@ -26,7 +26,7 @@ const VendorSchema = new Schema({
     email: {type: String, required: true},
     password: {type: String, required: true},
     salt: {type: String, required: true},
-    servicesAvailable: {type: Boolean},
+    serviceAvailable: {type: Boolean},
     coverImages: {type: [String]},
     rating: {type: [String]},
     // foods: [{
@@ -35,6 +35,15 @@ const VendorSchema = new Schema({
     // }]
 
 }, {
+    toJSON: {
+        transform(doc, ret) {
+            delete ret.password,
+            delete ret.salt,
+            delete ret.__v,
+            delete ret.createdAt,
+            delete ret.updatedAt
+        }
+    },
     timestamps: true
 })
 
