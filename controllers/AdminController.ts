@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { CreateVendorInput } from '../dto';
 import { Vendor } from '../models';
-import { generatePassword, generateSalt, vendorExists } from '../utility';
+import { generatePassword, generateSalt, getVendor } from '../utility';
 
 export const CreateVendor = async (
   req: Request,
@@ -19,7 +19,7 @@ export const CreateVendor = async (
     phone,
   } = <CreateVendorInput>req.body;
 
-  const existingVendor = await vendorExists(undefined, email);
+  const existingVendor = await getVendor(undefined, email);
 
   if (existingVendor !== null) {
     return res.json({ message: 'A vendor with that email already exists.' });
@@ -68,7 +68,7 @@ export const GetVendorById = async (
 ) => {
   const vendorId = req.params.id;
 
-  const vendor = await vendorExists(vendorId);
+  const vendor = await getVendor(vendorId);
   if (vendor === null) {
     return res.json({ message: `Vendor id ${vendorId} not found` });
   }
