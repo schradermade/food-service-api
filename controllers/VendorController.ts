@@ -78,6 +78,34 @@ export const UpdateVendorProfile = async (
   return res.json({ message: 'Vendor information not found' });
 };
 
+export const UpdateVendorCoverImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const user = req.user;
+
+  if (user) {
+    const vendor = await getVendor(user._id);
+
+    if (vendor !== null) {
+      const files = req.files as [Express.Multer.File];
+
+      const imageFileNames = files.map(
+        (file: Express.Multer.File) => file.filename,
+      );
+
+      vendor.coverImages.push(...imageFileNames);
+
+      const result = await vendor.save();
+
+      return res.json(result);
+    }
+  }
+
+  return res.json({ message: 'Could not add food item' });
+};
+
 export const UpdateVendorService = async (
   req: Request,
   res: Response,
