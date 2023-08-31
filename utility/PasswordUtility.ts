@@ -9,7 +9,10 @@ export const generateSalt = async () => {
   return await bcrypt.genSalt();
 };
 
-export const generatePassword = async (password: string, salt: string) => {
+export const generateHashedPassword = async (
+  password: string,
+  salt: string,
+) => {
   return await bcrypt.hash(password, salt);
 };
 
@@ -18,7 +21,9 @@ export const validatePassword = async (
   savedPassword: string,
   salt: string,
 ) => {
-  return (await generatePassword(enteredPassword, salt)) === savedPassword;
+  return (
+    (await generateHashedPassword(enteredPassword, salt)) === savedPassword
+  );
 };
 
 export const generateSignature = (payload: VenderPayload) => {
