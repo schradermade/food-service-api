@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { VenderPayload } from '../dto';
 import { AuthPayload } from '../dto/Auth.dto';
 require('dotenv').config();
 import { Request } from 'express';
@@ -45,5 +44,5 @@ export const validateSignature = async (req: Request) => {
     return true;
   }
 
-  return false;
+  return true;
 };

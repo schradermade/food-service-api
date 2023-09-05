@@ -14,15 +14,20 @@ export const generateOtp = () => {
 };
 
 export const onRequestOtp = async (otp: number, toPhoneNumber: string) => {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  // const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-  const client = require('twilio')(accountSid, authToken);
-  const response = await client.messages.create({
+  // const client = require('twilio')(accountSid, authToken);
+  // const response = await client.messages.create({
+  //   body: `Your OTP is ${otp}`,
+  //   from: '+15037827202',
+  //   to: `+1${toPhoneNumber}`,
+  // });
+  const response = {
     body: `Your OTP is ${otp}`,
     from: '+15037827202',
     to: `+1${toPhoneNumber}`,
-  });
+  };
 
   return response;
 };

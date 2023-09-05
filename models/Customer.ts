@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 interface CustomerDoc extends Document {
   email: string;
   password: string;
-  salt: [string];
+  salt: string;
   firstName: string;
   lastName: string;
   address: string;

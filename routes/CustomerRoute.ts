@@ -21,10 +21,10 @@ router.post('/login', CustomerLogin);
 router.use(authenticateUser);
 
 // Verify Customer Account
-router.post('/verify', CustomerVerify);
+router.patch('/verify', CustomerVerify);
 
 // OTP / Requesting OTP
-router.post('/otp', RequestOtp);
+router.get('/otp', RequestOtp);
 
 // Profile
 router.get('/profile', GetCustomerProfile);
