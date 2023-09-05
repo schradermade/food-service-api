@@ -87,7 +87,37 @@ export const CustomerVerify = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {};
+) => {
+  const { otp } = req.body;
+
+  const customer = req.user;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id);
+
+    if (profile) {
+      if (profile.otp === parseInt(otp) && profile.otp_expiry >= new Date()) {
+        profile.verified = true;
+
+        const updatedCustomerResponse = await profile.save();
+
+        // generate the signature
+        const signature = generateSignature({
+          _id: updatedCustomerResponse._id,
+          email: updatedCustomerResponse.email,
+          verified: updatedCustomerResponse.verified,
+        });
+
+        return res.status(201).json({
+          signature: signature,
+          verified: updatedCustomerResponse.verified,
+          email: updatedCustomerResponse.email,
+        });
+      }
+    }
+  }
+  return res.status(400).json({ message: 'Error with OTP Validation' });
+};
 
 export const RequestOtp = async (
   req: Request,
