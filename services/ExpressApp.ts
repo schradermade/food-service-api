@@ -1,6 +1,11 @@
 require('dotenv').config();
 import express, { Application } from 'express';
-import { AdminRoute, ShoppingRoute, VendorRoute } from '../routes';
+import {
+  AdminRoute,
+  CustomerRoute,
+  ShoppingRoute,
+  VendorRoute,
+} from '../routes';
 import bodyParser from 'body-parser';
 import path from 'path';
 
@@ -11,6 +16,7 @@ export default async (app: Application) => {
 
   app.use('/admin', AdminRoute);
   app.use('/vendor', VendorRoute);
+  app.use('/customer', CustomerRoute);
   app.use(ShoppingRoute);
 
   return app;

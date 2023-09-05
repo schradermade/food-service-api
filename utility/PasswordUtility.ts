@@ -26,7 +26,7 @@ export const validatePassword = async (
   );
 };
 
-export const generateSignature = (payload: VenderPayload) => {
+export const generateSignature = (payload: AuthPayload) => {
   return jwt.sign(payload, process.env.APP_SECRET || '', {
     expiresIn: '1d',
   });
