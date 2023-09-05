@@ -1,6 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { plainToClass } from 'class-transformer';
-import { CreateCustomerInputs, UserLoginInputs } from '../dto/Customer.dto';
+import {
+  CreateCustomerInputs,
+  UserLoginInputs,
+  EditCustomerProfileInputs,
+} from '../dto/Customer.dto';
 import { validate } from 'class-validator';
 import {
   generateHashedPassword,
@@ -178,11 +182,9 @@ export const RequestOtp = async (
 
       await onRequestOtp(otp, profile.phone);
 
-      return res
-        .status(200)
-        .json({
-          message: `OTP sent to your registered phone number: ${profile.otp}`,
-        });
+      return res.status(200).json({
+        message: `OTP sent to your registered phone number: ${profile.otp}`,
+      });
     }
   }
 
@@ -193,10 +195,49 @@ export const GetCustomerProfile = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {};
+) => {
+  const customer = req.user;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id);
+
+    if (profile) {
+      res.status(200).json(profile);
+    }
+  }
+
+  return res.status(400).json({ message: 'Error getting profile.' });
+};
 
 export const EditCustomerProfile = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {};
+) => {
+  const customer = req.user;
+  const customerInputs = plainToClass(EditCustomerProfileInputs, req.body);
+
+  const validationError = await validate(customerInputs, {
+    validationError: { target: false },
+  });
+
+  if (validationError.length > 0) {
+    return res.status(400).json(validationError);
+  }
+
+  const { firstName, lastName, address } = customerInputs;
+
+  if (customer) {
+    const profile = await Customer.findById(customer._id);
+
+    if (profile) {
+      profile.firstName = firstName;
+      profile.lastName = lastName;
+      profile.address = address;
+      const result = await profile.save();
+
+      res.status(201).json(result);
+    }
+  }
+  return res.status(400).json({ message: 'Error while updating profile' });
+};
