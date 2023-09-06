@@ -202,7 +202,7 @@ export const GetCustomerProfile = async (
     const profile = await Customer.findById(customer._id);
 
     if (profile) {
-      res.status(200).json(profile);
+      return res.status(201).json(profile);
     }
   }
 

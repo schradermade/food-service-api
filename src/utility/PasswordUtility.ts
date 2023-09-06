@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { AuthPayload } from '../dto/Auth.dto';
-require('dotenv').config();
 import { Request } from 'express';
+import { APP_SECRET } from '../config';
 
 export const generateSalt = async () => {
   return await bcrypt.genSalt();
@@ -26,7 +26,7 @@ export const validatePassword = async (
 };
 
 export const generateSignature = (payload: AuthPayload) => {
-  return jwt.sign(payload, process.env.APP_SECRET || '', {
+  return jwt.sign(payload, APP_SECRET || '', {
     expiresIn: '1d',
   });
 };
@@ -37,7 +37,7 @@ export const validateSignature = async (req: Request) => {
   if (signature) {
     const payload = (await jwt.verify(
       signature.split(' ')[1],
-      process.env.APP_SECRET || '',
+      APP_SECRET || '',
     )) as AuthPayload;
     req.user = payload;
 
